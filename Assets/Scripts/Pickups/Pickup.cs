@@ -7,7 +7,9 @@ public abstract class Pickup : MonoBehaviour
     public static float speed =20;
     protected abstract void GetBonus();
     private void OnTriggerEnter2D(Collider2D collision) {
-        GetBonus();
+        if(collision.gameObject.TryGetComponent(out PaddleCollider _)) {
+            GetBonus();
+        }
     }
     private void Update() {
         transform.Translate(Vector3.down * Time.deltaTime * speed);

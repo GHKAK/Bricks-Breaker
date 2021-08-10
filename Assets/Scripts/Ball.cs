@@ -5,14 +5,16 @@ using UnityEngine;
 public class Ball : MonoBehaviour {
     int layerRaycast;
     [SerializeField] float speed = 2;
-    Vector2 direction = Vector2.up;
+    public Vector2 direction;
     RaycastHit2D hit;
     private bool isCollide = false;
     private void Awake() {
         layerRaycast = LayerMask.GetMask("Default");
+        //if(gameObject.activeInHierarchy) {
+        //    SetTarget();
+        //}
     }
     private void Start() {
-        SetTarget();
     }
     private void Update() {
         if(Input.GetKeyDown(KeyCode.Space)) {
@@ -25,6 +27,7 @@ public class Ball : MonoBehaviour {
     }
     public void SetDirection(Vector2 newDirection) {
         direction = newDirection;
+        SetTarget();
     }
     public void PaddleCollision(Vector3 paddlePosition) {
         direction = (transform.position - (Vector3)direction * 0.5f - paddlePosition).normalized;
@@ -95,6 +98,7 @@ public class Ball : MonoBehaviour {
         } catch(System.Exception) {
             StopAllCoroutines();
             SetTarget();
+            midPoint = Vector2.zero;
         }
         return midPoint;
 

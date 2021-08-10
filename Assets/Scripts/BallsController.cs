@@ -23,7 +23,9 @@ public class BallsController : MonoBehaviour {
     public void UpdateBalls() {
         var balls = FindObjectsOfType<Ball>();
         foreach(var ball in balls) {
-            Balls.Add(ball);
+            if(ball.gameObject.activeInHierarchy) {
+                Balls.Add(ball);
+            }
         }
     }
 }
