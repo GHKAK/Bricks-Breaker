@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Target : MonoBehaviour {
+    public bool isDestroyed=false;
     public void SetInactive() {
         gameObject.SetActive(false);
         if(Random.Range(0, 99) < 1) {
