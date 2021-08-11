@@ -6,7 +6,7 @@ public class LevelStart : MonoBehaviour {
     [SerializeField] LineRenderer lineRenderer;
     [SerializeField] Paddle paddle;
     [SerializeField] Vector2 startPosition = new Vector2(0f, -29);
-    Material material;
+    [SerializeField] Material material;
     Camera mainCamera;
     Ball ball;
     GameObject ballObject;
@@ -53,13 +53,13 @@ public class LevelStart : MonoBehaviour {
     }
     void RenderTrajectory() {
         var hit = Physics2D.CircleCast(ball.transform.position, ball.transform.localScale.x / 2, direction,100,1);
-        float distance = Vector2.Distance(ball.transform.position, hit.point) / 2 - 2;
+        float distance = Vector2.Distance(ball.transform.position, hit.point) / 2 ;
         int countBeforeReflection = Mathf.RoundToInt(distance);
         lineRenderer.positionCount = countBeforeReflection ;
         for(int i = 0; i < countBeforeReflection; i++) {
             lineRenderer.SetPosition(i, ball.transform.position + (Vector3)direction * 2 * (i + 1));
         }
-        lineRenderer.material.SetFloat("Repeat Count", distance);
+        material.SetFloat("_Rep", distance*2);
         //lineRenderer.SetPosition(countBeforeReflection - 1, hit.point );
 
         //Vector2 reflect = Vector2.Reflect(direction, hit.normal);
