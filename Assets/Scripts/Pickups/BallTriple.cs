@@ -29,7 +29,10 @@ public class BallTriple : Pickup {
     }
     IEnumerator ActiveBalls(int numberStart) {
         int i;
-        for(i = numberStart; i < numberStart +10 && i < activeBallsStart.Count; i++) {
+        for(i = numberStart; i < numberStart + 10 ; i++) {
+            if(i >= activeBallsStart.Count) {
+                break;
+            }
             if(activeBallsStart[i].activeInHierarchy) {
                 Vector2 direction = activeBallsStart[i].GetComponent<Ball>().direction;
                 BallsPool.Instance.AddBall(activeBallsStart[i].transform.position, -direction);
@@ -39,10 +42,21 @@ public class BallTriple : Pickup {
             }
         }
         yield return new WaitForEndOfFrame();
-        if(i < activeBallsStart.Count) { 
-            StartCoroutine(ActiveBalls(i)); 
+        if(i < activeBallsStart.Count) {
+            StartCoroutine(ActiveBalls(i));
         }
 
+    }
+    IEnumerator ActiveAllBalls() {
+        foreach(var ball in activeBallsStart) {
+            if(ball.activeInHierarchy) {
+                Vector2 direction = ball.GetComponent<Ball>().direction;
+                BallsPool.Instance.AddBall(ball.transform.position, -direction);
+                BallsPool.Instance.AddBall(ball.transform.position, Vector2.Perpendicular(direction));
+                BallsPool.Instance.AddBall(ball.transform.position, -Vector2.Perpendicular(direction));
+            }
+        }
+        yield return null;
     }
     //}
 }

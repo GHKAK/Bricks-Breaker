@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour {
     int layerRaycast;
-    CircleCollider2D collider;
+    public CircleCollider2D collider;
     [SerializeField] float speed = 2;
     public Vector2 direction;
     RaycastHit2D hit;
@@ -40,7 +40,7 @@ public class Ball : MonoBehaviour {
     }
     void SetTarget() {
         StopAllCoroutines();
-        hit = Physics2D.Raycast(transform.position,/* Vector2.one, 0, */direction, 100, layerRaycast);
+        hit = Physics2D.CircleCast(transform.position,0.35f,direction,100, layerRaycast);
 
         isCollide = false;
         StartCoroutine(WaitDistance());
@@ -48,58 +48,54 @@ public class Ball : MonoBehaviour {
     }
     IEnumerator WaitDistance() {
         yield return new WaitForSeconds((Vector2.Distance(hit.point, transform.position) - gameObject.transform.localScale.x) / speed);
-        transform.Translate(direction * Time.deltaTime/2 * speed);
+       // transform.Translate(direction * Time.deltaTime/2 * speed);
         isCollide = true;
         float timeStart = Time.time;
         Vector2 previousDirection = direction;
+        Vector2 normal = Vector2.zero;
         if(hit.collider!=null) {
-            if(hit.collider.TryGetComponent(out Target target)) {
+            
+            if(hit.collider.TryGetComponent(out Target target)) {   
                 if(target.isDestroyed) {
                     SetTarget();
                 } else {
                     target.isDestroyed = true;
-                    direction = Vector2.Reflect(direction, GetNormal());
+                    normal = GetNormal();
+                    direction = Vector2.Reflect(direction, normal);
                     target.SetInactive();
                 }            
             } else {
-                direction = Vector2.Reflect(direction, GetNormal());
+                normal = GetNormal();
+                direction = Vector2.Reflect(direction, normal);
             }
-            transform.position = hit.point - previousDirection * gameObject.transform.localScale.x;
+            transform.position = hit.centroid-previousDirection * 0.3f/* + normal * gameObject.transform.localScale.x*/;
         }
         SetTarget();
     }
     Vector2 GetNormal() {
-        float angle = Vector2.SignedAngle(hit.collider.transform.position - (Vector3)hit.point, Vector2.right);
+        var vector = (Vector3)hit.point - hit.collider.transform.position;
+        float angle = Vector2.SignedAngle(Vector2.right, vector);
         angle = Mathf.RoundToInt(angle);
+        var circleHits = Physics2D.CircleCastAll(hit.point, gameObject.transform.localScale.x / 10, direction, 0.05f, layerRaycast);
         if(angle % 45 == 0 && angle % 90 != 0 && angle != 0) {
-            var circleHits = Physics2D.CircleCastAll(hit.point, gameObject.transform.localScale.x/2, direction, 0.05f, layerRaycast);
             RaycastHit2D[] arrayWithHit = new RaycastHit2D[circleHits.Length + 1];
             arrayWithHit[0] = hit;
             circleHits.CopyTo(arrayWithHit,1);
             if(circleHits.Length == 1) {
-                //switch(angle) {
-                //    case 45:
-                //        return Vectors.topRight;
-                //    case -45:
-                //        return Vectors.downRight;
-                //    case 135:
-                //        return Vectors.topLeft;
-                //    case -135:
-                //        return Vectors.downLeft;
-                //}
-                angle = Vector2.SignedAngle(hit.rigidbody.transform.position - (Vector3)(hit.point - direction), Vector2.right);
+                angle = Vector2.SignedAngle( Vector2.right,hit.rigidbody.transform.position - (Vector3)(hit.point - direction));
             } else {
                 Vector2 midPoint = MidPoint2(circleHits);
 
                 angle = Vector2.SignedAngle(midPoint - hit.point, Vector2.right);
             }
-            foreach(var circleHit in circleHits) {
-                if(circleHit.rigidbody != hit.rigidbody && circleHit.rigidbody.gameObject.TryGetComponent(out Target target)) {
-                    target.SetInactive();
-                }
+        }
+        foreach(var circleHit in circleHits) {
+            if(circleHit.rigidbody != hit.rigidbody && circleHit.rigidbody.gameObject.TryGetComponent(out Target target)) {
+                target.isDestroyed = true;
+                target.SetInactive();
             }
         }
-        if((angle > 0 && angle < 45) || (angle > -45 && angle < 0)) {
+        if((angle >= 0 && angle < 45) || (angle > -45 && angle <= 0)) {
             return Vector2.right;
         } else if(angle < 135 && angle > 45) {
             return Vector2.up;

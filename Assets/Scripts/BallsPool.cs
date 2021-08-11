@@ -12,20 +12,18 @@ public class BallsPool : MonoBehaviour {
 
     void Awake() {
         Instance = this;
-    }
-
-    void Start() {
         pooledBalls = new List<GameObject>();
-        foreach(var startBall in FindObjectsOfType<Ball>()) {
-            pooledBalls.Add(startBall.gameObject);
-        }
         GameObject ball;
         for(int i = 0; i < amountToPool; i++) {
             ball = Instantiate(ballPrefab);
             ball.SetActive(false);
             pooledBalls.Add(ball);
         }
-        EntryForTests();
+    }
+
+    void Start() {
+
+       // EntryForTests();
     }
     public GameObject GetPooledBall() {
         for(int i = 0; i < amountToPool; i++) {
@@ -43,11 +41,11 @@ public class BallsPool : MonoBehaviour {
             ball.GetComponent<Ball>().SetDirection(startDirection);
         }
     }
-    void EntryForTests() {
-        for(int i = 0; i < 6; i++) {
+   // void EntryForTests() {
+    //    for(int i = 0; i < 6; i++) {
 
-            pooledBalls[i].SetActive(true);
-            pooledBalls[i].GetComponent<Ball>().SetDirection((Vector2.up +Vector2.right).normalized);
-        }
-    }
+    //        pooledBalls[i].SetActive(true);
+    //        pooledBalls[i].GetComponent<Ball>().SetDirection((Vector2.up +Vector2.right).normalized);
+    //    }
+    //}
 }
