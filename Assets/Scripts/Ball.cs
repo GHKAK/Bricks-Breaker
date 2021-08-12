@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Tilemaps;
 public class Ball : MonoBehaviour {
     int layerRaycast;
     public CircleCollider2D collider;
@@ -18,8 +18,15 @@ public class Ball : MonoBehaviour {
         //}
     }
     private void Start() {
+        var tilemapObject = GameObject.Find("Targets");
+        var tilemap = tilemapObject.GetComponent<Tilemap>();
+        //tilemap.SetTile()
+        //tilemap.WorldToCell(hit.point)
     }
-    private void Update() {
+    private void Update() { 
+        //GameObject.FindObjectOfType<Tilemap>().SetTile(new Vector3Int(17,0,0), null);
+        //GameObject.FindObjectOfType<Tilemap>().SetTile(new Vector3Int(-18, 0, 0), null);
+
         if(!isCollide) {
             transform.Translate(direction * Time.deltaTime * speed);
         }
@@ -61,20 +68,32 @@ public class Ball : MonoBehaviour {
         Vector2 normal = Vector2.zero;
         if(hit.collider!=null) {
             
-            if(hit.collider.TryGetComponent(out Target target)) {   
-                if(target.isDestroyed) {
-                    SetTarget();
-                } else {
-                    target.isDestroyed = true;
-                    normal = GetNormal();
+            if(hit.collider.gameObject.TryGetComponent(out Target target)) {   
+                //if(hit.collider.enabled) {
+                    Tilemap targets = hit.collider.gameObject.GetComponent<Tilemap>();
+                    Vector3Int tilePosition = targets.WorldToCell(hit.point);
+                if(tilePosition.x > 0) {
+                    tilePosition.x -= 1;
+                }
+                if(tilePosition.y> 0) {
+                    tilePosition.y -= 1;
+                }
+                targets.SetTile(tilePosition, null);
+                    //hit.collider.enabled = false;
+                    normal =hit.normal;
                     direction = Vector2.Reflect(direction, normal);
-                    target.SetInactive();
-                }            
+
+                //} else {
+                //    //target.isDestroyed = true;
+                //    normal = GetNormal();
+                //    direction = Vector2.Reflect(direction, normal);
+                //    target.SetInactive();
+                //}
             } else {
                 normal = GetNormal();
                 direction = Vector2.Reflect(direction, normal);
             }
-            transform.position = hit.centroid-previousDirection * 0.3f/* + normal * gameObject.transform.localScale.x*/;
+           // transform.position = hit.centroid-previousDirection * 0.3f/* + normal * gameObject.transform.localScale.x*/;
         }
         SetTarget();
     }
@@ -89,7 +108,7 @@ public class Ball : MonoBehaviour {
             arrayWithHit[0] = hit;
             circleHits.CopyTo(arrayWithHit,1);
             if(circleHits.Length == 1) {
-                angle = Vector2.SignedAngle( Vector2.right,hit.rigidbody.transform.position - (Vector3)(hit.point - direction));
+                angle = Vector2.SignedAngle( Vector2.right,hit.collider.transform.position - (Vector3)(hit.point - direction));
             } else {
                 Vector2 midPoint = MidPoint2(circleHits);
 
@@ -97,7 +116,7 @@ public class Ball : MonoBehaviour {
             }
         }
         foreach(var circleHit in circleHits) {
-            if(circleHit.rigidbody != hit.rigidbody && circleHit.rigidbody.gameObject.TryGetComponent(out Target target)) {
+            if(circleHit.collider != hit.collider && circleHit.collider.gameObject.TryGetComponent(out Target target)) {
                 target.isDestroyed = true;
                 target.SetInactive();
             }
@@ -115,9 +134,9 @@ public class Ball : MonoBehaviour {
     Vector2 MidPoint2(RaycastHit2D[] hits) {
         Vector2 midPoint;
         try {
-            midPoint = hits[0].rigidbody.transform.position;
+            midPoint = hits[0].collider.transform.position;
             for(int i = 1; i < hits.Length; i++) {
-                Vector2 second = hits[i].rigidbody.transform.position;
+                Vector2 second = hits[i].collider.transform.position;
                 Vector2 difference = midPoint - second;
                 midPoint = midPoint - difference * 0.5f;
 

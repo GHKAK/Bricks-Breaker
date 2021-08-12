@@ -23,7 +23,7 @@ public class BallsPool : MonoBehaviour {
 
     void Start() {
 
-       EntryForTests();
+       //EntryForTests();
     }
     public GameObject GetPooledBall() {
         for(int i = 0; i < amountToPool; i++) {

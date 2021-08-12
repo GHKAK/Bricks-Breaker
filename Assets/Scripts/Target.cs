@@ -16,8 +16,8 @@ public class Target : MonoBehaviour {
 
         StartCoroutine(WaitSoundPlay());
 
-        GetComponent<BoxCollider2D>().enabled=false;
-        GetComponentInChildren<SpriteRenderer>().enabled = false;
+        //GetComponent<BoxCollider2D>().enabled=false;
+        //GetComponentInChildren<SpriteRenderer>().enabled = false;
 
         if(Random.Range(0, 99) < 5) {
             var pickups = PickupsController.Instance.pickups;
@@ -28,6 +28,5 @@ public class Target : MonoBehaviour {
     IEnumerator WaitSoundPlay() {
         yield return new WaitForSeconds(squarePop.length);
         source.loop = false;
-        gameObject.SetActive(false);
     }
 }
