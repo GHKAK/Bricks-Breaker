@@ -23,7 +23,7 @@ public class BallsPool : MonoBehaviour {
 
     void Start() {
 
-       // EntryForTests();
+       EntryForTests();
     }
     public GameObject GetPooledBall() {
         for(int i = 0; i < amountToPool; i++) {
@@ -41,11 +41,15 @@ public class BallsPool : MonoBehaviour {
             ball.GetComponent<Ball>().SetDirection(startDirection);
         }
     }
-   // void EntryForTests() {
-    //    for(int i = 0; i < 6; i++) {
+    void EntryForTests() {
+        var balls = FindObjectsOfType<Ball>();
+        foreach(var ball in balls) {
+            pooledBalls.Add(ball.gameObject);
+        }
+        for(int i = 0; i < 6; i++) {
 
-    //        pooledBalls[i].SetActive(true);
-    //        pooledBalls[i].GetComponent<Ball>().SetDirection((Vector2.up +Vector2.right).normalized);
-    //    }
-    //}
+            pooledBalls[i].SetActive(true);
+            pooledBalls[i].GetComponent<Ball>().SetDirection((Vector2.up + Vector2.right).normalized);
+        }
+    }
 }

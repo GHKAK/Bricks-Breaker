@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Paddle : MonoBehaviour {
+    public static Paddle Instance;
     Camera mainCamera;
     Vector2 mousePosition;
     bool isSwiping = false;
+    private void Awake() {
+        Instance = this;
+    }
     void Start() {
         mainCamera = Camera.main;
     }

@@ -7,7 +7,8 @@ public class Ball : MonoBehaviour {
     public CircleCollider2D collider;
     [SerializeField] float speed = 2;
     public Vector2 direction;
-    RaycastHit2D hit;
+    RaycastHit2D previousHit;
+    RaycastHit2D hit ;
     private bool isCollide = false;
     private void Awake() {
         layerRaycast = LayerMask.GetMask("Default");
@@ -40,8 +41,13 @@ public class Ball : MonoBehaviour {
     }
     void SetTarget() {
         StopAllCoroutines();
-        hit = Physics2D.CircleCast(transform.position,0.35f,direction,100, layerRaycast);
-
+        //hit = Physics2D.CircleCast(transform.position,0.35f,direction,100, layerRaycast);
+        previousHit = hit;
+        hit = Physics2D.Raycast(transform.position,  direction, 100, layerRaycast);
+        //if(previousHit&& previousHit.rigidbody == hit.rigidbody) {
+        //    gameObject.SetActive(false);
+        //    return;
+        //}
         isCollide = false;
         StartCoroutine(WaitDistance());
 
@@ -77,6 +83,7 @@ public class Ball : MonoBehaviour {
         float angle = Vector2.SignedAngle(Vector2.right, vector);
         angle = Mathf.RoundToInt(angle);
         var circleHits = Physics2D.CircleCastAll(hit.point, gameObject.transform.localScale.x / 10, direction, 0.05f, layerRaycast);
+
         if(angle % 45 == 0 && angle % 90 != 0 && angle != 0) {
             RaycastHit2D[] arrayWithHit = new RaycastHit2D[circleHits.Length + 1];
             arrayWithHit[0] = hit;

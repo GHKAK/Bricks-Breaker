@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa7ffb6248f544f4d80f17ece3b42af4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  squarePop: {fileID: 8300000, guid: 12c226c825018334c9d37e5c49810473, type: 3}
+  squarePop: {fileID: 8300000, guid: 1c63f129acad6ff4ba1c82cc4ace3ea3, type: 3}
   isDestroyed: 0
 --- !u!1 &5684847736935625554
 GameObject:

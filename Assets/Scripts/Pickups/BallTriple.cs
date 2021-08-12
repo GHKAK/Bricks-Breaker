@@ -4,32 +4,22 @@ using UnityEngine;
 
 public class BallTriple : Pickup {
     [SerializeField] static GameObject ballPrefab;
+    [SerializeField] AudioSource source;
     List<GameObject> activeBallsStart;
-    private void Start() {
-    }
     protected override void GetBonus() {
-        //if(collision.gameObject.TryGetComponent<Paddle>(out _)){ 
+        source.Play();
         activeBallsStart = new List<GameObject>();
         foreach(var ball in BallsPool.Instance.pooledBalls) {
             if(ball.activeInHierarchy) {
                 activeBallsStart.Add(ball);
             }
         }
-        StartCoroutine(ActiveBalls(0));
-
-        //foreach(var ball in activeBallsStart) {
-        //    if(ball.activeInHierarchy) {
-        //        Vector2 direction = ball.GetComponent<Ball>().direction;
-        //        BallsPool.Instance.AddBall(ball.transform.position, -direction);
-
-        //        BallsPool.Instance.AddBall(ball.transform.position, Vector2.Perpendicular(direction));
-        //        BallsPool.Instance.AddBall(ball.transform.position, -Vector2.Perpendicular(direction));
-        //    }
-        //}
+        StartCoroutine(ActiveAllBalls());
+       // StartCoroutine(ActiveBalls(0));
     }
     IEnumerator ActiveBalls(int numberStart) {
         int i;
-        for(i = numberStart; i < numberStart + 10 ; i++) {
+        for(i = numberStart; i < numberStart + 3; i++) {
             if(i >= activeBallsStart.Count) {
                 break;
             }
@@ -41,9 +31,13 @@ public class BallTriple : Pickup {
                 BallsPool.Instance.AddBall(activeBallsStart[i].transform.position, -Vector2.Perpendicular(direction));
             }
         }
-        yield return new WaitForEndOfFrame();
+        yield return null;
+        //yield return new WaitForFixedUpdate();
         if(i < activeBallsStart.Count) {
             StartCoroutine(ActiveBalls(i));
+        } else {
+            yield return new WaitForSeconds(source.clip.length);
+            Destroy(gameObject);
         }
 
     }
