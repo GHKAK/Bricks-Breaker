@@ -13,9 +13,6 @@ public class Ball : MonoBehaviour {
     private void Awake() {
         layerRaycast = LayerMask.GetMask("Default");
         collider = GetComponentInChildren<CircleCollider2D>();
-        //if(gameObject.activeInHierarchy) {
-        //    SetTarget();
-        //}
     }
     private void Start() {
     }
@@ -41,40 +38,44 @@ public class Ball : MonoBehaviour {
     }
     void SetTarget() {
         StopAllCoroutines();
-        //hit = Physics2D.CircleCast(transform.position,0.35f,direction,100, layerRaycast);
-        previousHit = hit;
         hit = Physics2D.Raycast(transform.position,  direction, 100, layerRaycast);
-        //if(previousHit&& previousHit.rigidbody == hit.rigidbody) {
-        //    gameObject.SetActive(false);
-        //    return;
-        //}
+        
         isCollide = false;
         StartCoroutine(WaitDistance());
 
     }
     IEnumerator WaitDistance() {
         yield return new WaitForSeconds((Vector2.Distance(hit.point, transform.position) - gameObject.transform.localScale.x) / speed);
-       // transform.Translate(direction * Time.deltaTime/2 * speed);
         isCollide = true;
         float timeStart = Time.time;
         Vector2 previousDirection = direction;
         Vector2 normal = Vector2.zero;
         if(hit.collider!=null) {
-            
+            if(previousHit && previousHit.rigidbody.gameObject == hit.rigidbody.gameObject) {
+                gameObject.SetActive(false);
+                StopAllCoroutines();
+                yield return null;
+                //SetTarget();
+            }
+            previousHit = hit;
+
             if(hit.collider.TryGetComponent(out Target target)) {   
                 if(target.isDestroyed) {
                     SetTarget();
                 } else {
                     target.isDestroyed = true;
-                    normal = GetNormal();
+                    //normal = GetNormal();
+                    normal = hit.normal;
                     direction = Vector2.Reflect(direction, normal);
                     target.SetInactive();
                 }            
             } else {
-                normal = GetNormal();
+                normal = hit.normal;
+
+                //normal = GetNormal();
                 direction = Vector2.Reflect(direction, normal);
             }
-            transform.position = hit.centroid-previousDirection * 0.3f/* + normal * gameObject.transform.localScale.x*/;
+            transform.position = hit.centroid-previousDirection * 0.3f;
         }
         SetTarget();
     }

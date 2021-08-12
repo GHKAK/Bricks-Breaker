@@ -22,7 +22,6 @@ public class BallsPool : MonoBehaviour {
     }
 
     void Start() {
-
        EntryForTests();
     }
     public GameObject GetPooledBall() {

@@ -14,9 +14,9 @@ public class Paddle : MonoBehaviour {
         mainCamera = Camera.main;
     }
     private void Update() {
-        if(Input.GetMouseButtonDown(0) /*|| Input.touches[0].phase == TouchPhase.Began*/) {
+        if(Input.GetMouseButtonDown(0) ) {
             isSwiping = true;
-        } else if(Input.GetMouseButtonUp(0) /*|| Input.touches[0].phase == TouchPhase.Ended*/) {
+        } else if(Input.GetMouseButtonUp(0) ) {
             isSwiping = false;
         }
         if(isSwiping) {
@@ -25,9 +25,8 @@ public class Paddle : MonoBehaviour {
     }
     void UpdateMousePosition() {
         mousePosition = mainCamera.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
-        if(Mathf.Abs(mousePosition.x) < 21) {
+        if(Mathf.Abs(mousePosition.x) < 21&&mousePosition.y<40) {
             transform.position = new Vector3(mousePosition.x, transform.position.y);
-
         }
     }
 }

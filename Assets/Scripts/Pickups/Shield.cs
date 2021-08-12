@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Shield : MonoBehaviour {
     public static Shield Instance;
-    bool isTimeOver = false;
     float time = 0;
     float progress = 0;
     float xScale;
@@ -36,7 +35,6 @@ public class Shield : MonoBehaviour {
     }
     IEnumerator SetShield() {
         yield return new WaitForSeconds(timeToDecrease);
-        isTimeOver = true;
         while(progress < 1) {
             time += Time.deltaTime;
             progress = time / decreaseTime;

@@ -12,7 +12,6 @@ public class LevelStart : MonoBehaviour {
     GameObject ballObject;
     bool isSwiping = false;
     Vector2 direction;
-    int countAfterReflection=4;
     private void Awake() {
         paddle.enabled = false;
         mainCamera = FindObjectOfType<Camera>();
@@ -45,7 +44,7 @@ public class LevelStart : MonoBehaviour {
             paddle.gameObject.transform.position = new Vector2(mousePosition.x, paddle.gameObject.transform.position.y);
             ballObject.transform.position = new Vector2(mousePosition.x, ballObject.transform.position.y);
             direction = Vector2.up;
-        } else { 
+        } else if(mousePosition.y < 40){ 
             paddle.gameObject.transform.position = new Vector2(0, paddle.gameObject.transform.position.y);
             ballObject.transform.position = new Vector2(0, ballObject.transform.position.y);
             direction = (mousePosition - (Vector2)ballObject.transform.position).normalized;
@@ -60,12 +59,6 @@ public class LevelStart : MonoBehaviour {
             lineRenderer.SetPosition(i, ball.transform.position + (Vector3)direction * 2 * (i + 1));
         }
         material.SetFloat("_Rep", distance*2);
-        //lineRenderer.SetPosition(countBeforeReflection - 1, hit.point );
-
-        //Vector2 reflect = Vector2.Reflect(direction, hit.normal);
-        //for(int i = 0; i < countAfterReflection; i++) {
-        //    lineRenderer.SetPosition(i + countBeforeReflection, hit.point + reflect * 2 * (i));
-        //}
     }
     void LaunchBall() {
         ball.collider.enabled = true;

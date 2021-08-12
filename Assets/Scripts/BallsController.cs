@@ -12,9 +12,6 @@ public class BallsController : MonoBehaviour {
         Instance = this ;
         UpdateBalls();
     }
-    //void Start() {
-    //    Balls.Add(FindObjectOfType<Ball>());
-    //}
     public void AddBall(Vector2 startPosition, Vector2 startDirection) {
         var ballObject = Instantiate(ballPrefab, startPosition, ballPrefab.transform.rotation);
         Ball ball = ballObject.GetComponent<Ball>();
